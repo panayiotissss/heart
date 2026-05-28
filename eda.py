@@ -6,6 +6,7 @@ import seaborn as sns
 #Load data
 
 df = pd.read_csv('data/disease_prediction.csv')
+df.drop(columns=['patient_id'], inplace=True)
 
 #Inspect
 
@@ -32,9 +33,22 @@ print(df.isnull().sum())
 print(df.duplicated().sum())
 #df.drop_duplicates(inplace=True)
 
+#Check extreme outliers (bad data, not statistical)
+
+num_features = ['age', 'bmi', 'glucose_mg_dl', 'cholesterol_mg_dl', 'systolic_bp', 'diastolic_bp', 'heart_rate']
+print(df[num_features].describe())
+
+fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+for ax, feature in zip(axes.flatten(), num_features):
+    ax.boxplot(df[feature].dropna())
+    ax.set_title(feature)
+axes[1, 3].set_visible(False)
+plt.tight_layout()
+plt.show()
 
 
-#Check features in response to target
+
+#Check numerical features in response to target
 fig, axes = plt.subplots(2, 2, figsize=(12, 8))
 features = ['age', 'bmi', 'glucose_mg_dl', 'cholesterol_mg_dl']
 
@@ -48,6 +62,7 @@ plt.tight_layout()
 plt.show()
 
 
+#Check categorical features in response to target
 cat_features = ['gender', 'smoking', 'alcohol_consumption', 'physical_activity', 'family_history']                                                                                                       
 fig, axes = plt.subplots(2, 3, figsize=(15, 8))                                                                                                                                                          
                                                                                                                                                                                                          
@@ -68,7 +83,7 @@ plt.show()
 
 
 
-# Correlation Matrix
+# Correlation Matrix (Linear relationships)
 
 numeric_df = df.select_dtypes(include='number')  # drops categoricals automatically
 numeric_df['disease'] = df['disease'].map({'Yes': 1, 'No': 0})
