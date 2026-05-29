@@ -8,7 +8,7 @@ load_dotenv()
 
 import joblib
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Security
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 
@@ -27,8 +27,10 @@ model = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global model
-    if os.path.exists('model.pkl'):
-        model = joblib.load('model.pkl')
+    if not os.path.exists('model.pkl'):
+        from model import train_and_save
+        train_and_save()
+    model = joblib.load('model.pkl')
     yield  #Before yield = on startup after = on shutdown
     model = None  
 
@@ -73,7 +75,7 @@ def model_info():
 
 
 @app.post('/train')
-def train(key: None = Depends(verify_train_key)):
+def train(key: None = Security(verify_train_key)):
     from model import train_and_save  # imported here to avoid running on startup
     global model
     metrics = train_and_save()
