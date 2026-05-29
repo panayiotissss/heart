@@ -6,7 +6,11 @@ Binary classifier that predicts the likelihood of disease from patient health in
 
 - **Model**: Random Forest — 93% accuracy, 0.98 ROC-AUC on held-out test set
 - **API**: FastAPI
-- **Frontend**: Streamlit *(coming soon)*
+- **Frontend**: Streamlit
+
+
+**Live Demo:** https://classificationheartdisease.streamlit.app  
+**API Docs:** https://classification-ijqg.onrender.com/docs
 
 ## Setup
 
